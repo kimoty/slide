@@ -1,74 +1,887 @@
 <!DOCTYPE html>
+
+<!--
+  Google HTML5 slide template
+
+  Authors: Luke Mahé (code)
+           Marcin Wichary (code and design)
+           
+           Dominic Mazzoni (browser compatibility)
+           Charles Chen (ChromeVox support)
+
+  URL: http://code.google.com/p/html5slides/
+-->
+
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Slide : " />
+    <title>Scala勉強会 第9回 </title>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Slide</title>
+    <meta charset='utf-8'>
+    <script
+      src='slides.js'></script>
   </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/kimoty/slide">View on GitHub</a>
-
-          <h1 id="project_title">Slide</h1>
-          <h2 id="project_tagline"></h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/kimoty/slide/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/kimoty/slide/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Slide maintained by <a href="https://github.com/kimoty">kimoty</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
+  
+  <style>
+    /* Your individual styles here, or just use inline styles if that’s
+       what you want. */
     
+    
+  </style>
+
+  <body style='display: none'>
+
+    <section class='slides layout-regular template-default'>
+      
+      <!-- Your slides (<article>s) go here. Delete or comment out the
+           slides below. -->
+      <article>
+        <h1>
+	  Scala勉強会 第9回
+	</h1>
+        <p>
+	  第15章 ケースクラスとパターンマッチ
+          <br>
+        </p>
+      </article>
+
+      <article>
+        <h3>
+	  単純なサンプルとして<br>
+	  算術式を操作するライブラリ
+        </h3>
+        <section>
+        <pre>
+abstract class Expr
+case class Var(name: String) extends Expr
+case class Number(num: Double) extends Expr
+case class UnOp(operator: String, arg: Expr) extends Expr 
+case class BinOp(operator: String, left: Expr, right: Expr) extends Expr
+	</pre>
+        </section>
+
+	<ul>
+	  <li>
+	   各サブクラスの前にcase修飾子
+	  </li>
+	  <li>
+	    このようなクラスをケースクラスと呼ぶ
+	  </li>
+	  <li>
+	    Scalaのコンパイラが構文に適切な変更を加えるようになる
+	  </li>
+	</ul>
+      </article>
+
+      <article>
+	<h3>
+	  変更点
+	</h3>
+
+	<ul>
+	  <li>
+	    クラス名を同じ名前のファクトリーメソッドを追加する
+	<section>
+	  <pre>
+val v = Var("x")
+val op = BinOp("+". Number(1.0). v)
+	  </pre>
+	</section>
+	  </li>
+	  <li>
+	    全てのパラメータリストにvalプレフィックスをつける<br>
+	    パラメータはフィールドとして管理される
+	<section>
+	  <pre>
+v.name 
+=> x
+
+op.left 
+=> Number(1.0)
+	  </pre>
+	</section>
+	  </li>
+	  <ul>
+      </article>
+      <article>
+	<h3>
+	  変更点2
+	</h3>
+	<ul>
+	  <li>
+	    toString,hashCode,equalsメソッドの自然な実装を追加してくれる
+	<section>
+	  <pre>
+op.right == Var("x")
+=> true
+	  </pre>
+	</section>
+	  </li>
+
+	  <li>
+	    copyメソッドの追加
+	<section>
+	  <pre>
+op.copy(operator = "-")
+⇒ res4: BinOp = BinOp(-,Number(1.0),Var(x))
+	  </pre>
+	</section>
+	  </li>
+	</ul>
+      </article>
+
+      <article>
+	<h3>
+	  パターンマッチ
+	</h3>
+	<ul>
+	<li>
+	  やりたいこと
+	<section>
+	  <pre>
+UnOp("-", UnOp("-", e)) => e //負の負は元のまま
+BinOp("+", e, Number(0)) => e //0の加算は元のまま
+BinOp("*", e, Number(1)) => e //1の乗算は元のまま	    
+	  </pre>	    
+	</section>
+	</li>
+	<li>
+	  そのまま取り込める(*´∀｀*)
+	<section>
+	  <pre>
+def simplifyTop(expr: Expr): Expr = expr match {
+case UnOp("-", UnOp("-", e)) => e //負の負は元のまま
+case BinOp("+", e, Number(0)) => e //0の加算は元のまま
+case BinOp("*", e, Number(1)) => e //1の乗算は元のまま	
+case _ => expr
+}    
+	  </pre>	    
+	</section>
+	</li>
+	</ul>
+      </article>	
+      <article>
+	<ul>
+	  <li>
+	    使うときは
+	    <section>
+	      <pre>
+simplifyTop(UnOp("-", UnOp("-",Var("x"))))
+=> Var(x)
+	      </pre>
+	    </section>
+	  </li>
+	  <li>
+	    javaのswitchは
+	    <section>
+	      <pre>
+switch ( <セレクタ一式> ) { <選択肢> }
+	      </pre>
+	    </section>
+	  </li>
+	  <li>
+	    match式は
+	    <section>
+	      <pre>
+<セレクタ一式> match { <選択肢> }
+	      </pre>
+	    </section>
+	  </li>
+
+	</ul>
+      </article>
+      <article>
+	<section>
+	  <pre>
+def simplifyTop(expr: Expr): Expr = expr match {
+case UnOp("-", UnOp("-", e)) => e //負の負は元のまま
+case BinOp("+", e, Number(0)) => e //0の加算は元のまま
+case BinOp("*", e, Number(1)) => e //1の乗算は元のまま	
+case _ => expr
+}    </pre>	    
+	</section>
+	<table>
+	  <tr>
+	  <td>定数パターン</td>
+	  <td>"+",1</td>
+	  </tr>
+	  <tr>
+	  <td>変数パターン</td>
+	  <td>e,_</td>
+	  <tr>
+	  <td>コンストラクタパターン</td>
+	  <td>UnOp("-", e),Number(1)</td>
+	  </tr>
+	</table>
+      </article>
+
+      <article>
+	<h3>
+	  matchとswitchの違い
+	</h3>
+	<ul>
+	  <li>match式はjavaのswitchを一般化したもの</li>
+	  <li>javaのswitchは全てのパターンが定数で,最後のパターンがワイルドカードのmatch式として表現できる</li>
+	</ul>
+	<br>
+	<br>
+	<h3>
+	  注意すべき3つの違い
+	</h3>
+	<ul>
+	  <li>式なので必ず結果値を返す</li>
+	  <li>次の選択肢に続けて落ちて行かない</li>
+	  <li>マッチするパターンがなければMatchErrorという例外が発生</li>
+	</ul>
+      </article>
+      <article>
+	<ul>
+	  <li>空のデフォルトケースを持つパターン</li>
+	</ul>
+
+	<section>
+	      <pre>
+expr match {
+  case BinOp(op, left, rigth) =>
+    println(expr + " is a binary operation")
+  case _ =>
+}	      </pre>
+	    </section>	
+      </article>
+      <article>
+	<h3>
+	  パターンの種類についての詳細
+	</h3>
+	<br>
+	<br>
+	<h3>
+	  ワイルドカードパターン(_)
+	</h3>
+	<ul>
+	  <li>あらゆるオブジェクトにマッチする</li>
+	</ul>
+	<section>
+	      <pre>
+expr match {
+  case BinOp(_, _, _) =>
+    println(expr + " is a binary operation")
+  case _ =>
+}	      </pre>
+	    </section>
+
+      </article>
+      <article>
+	<h3>
+	  定数パターン
+	</h3>		 
+	<ul>
+	  <li>自分自身とだけマッチする</li>
+	  <li>定数として任意のリテラルが使える</li>
+	  <li>5,true,"hello",Nil(空のリスト)</li>
+	</ul>
+	<section>
+	      <pre>
+def describe(x: Any) = x match {
+   case 5 => "five"
+   case true => "truth"
+   case "hello" => "hi!"
+   case Nil => "the empty list"
+   case _ => "something else"
+}
+	      </pre>
+	    </section>
+
+      </article>
+　　　 <article>
+	<ul>
+	  <li>
+	変数パターンはワイルドカードと同じように、任意のオブジェクトにマッチする
+	</li>
+	  <li>
+	ワイルドカードとは異なり、オブジェクトに変数を束縛する
+	</li>
+	  <li>
+	その後は変数を使ってオブジェクトを操作できる
+	</li>
+	</ul>
+	<section>
+	      <pre>
+expr match {
+   case 0 => "zero"
+   case somethingElse => "not zero: " + somethingElse
+}
+	      </pre>
+	    </section>
+
+      </article>
+      
+      <article>
+	<ul>
+	  <li>定数パターンはシンボル名を持つことができる</li>
+	  <li>Nil,E(2.71828...),Pi(3.14159...)</li>
+	</ul>
+	<section>
+	  <pre>
+import math.{E,Pi}
+
+E match {
+   case Pi => "strange math? Pi = " + Pi
+   case _ => "OK"
+}
+	  </pre>
+	</section>
+	  <h3>
+Piは変数?,定数?
+	  </h3>
+	
+      </article>
+      <article>
+	<section>
+	  <pre>
+val pi = math.Pi
+=> pi: Double = 3.141592........
+
+E match {
+   case pi => "strange math? Pi = " + pi
+}
+
+=> strange math? Pi = 2.7182.......</pre>
+	</section>
+	<h3>
+	  先頭が小文字になっている単純名はパターン変数<br>
+	  そうでないものは定数
+	</h3>
+	<section>
+	  <pre>
+E match {
+   case pi => "strange math? Pi = " + pi
+   case _ => "OK"
+}
+=> unreachable code
+   case _ => "OK"</pre>
+	</section>
+      </article>
+
+      <article>
+	<h3>
+	  それでも小文字を使いたい
+	</h3>
+	<ul>
+	  <li>piがオブジェクトのフィールドになっている場合</li>
+	  <li>this.piやobj.piだと定数パターンと解釈</li>
+	</ul>
+	<ul>
+	  <li>piがローカル変数の場合</li>
+	  <li>`pi`だと定数パターンと解釈</li>
+	</ul>
+      </article>
+      <article>
+	<h3>
+	  コンストラクタパターン
+	</h3>
+	<ul>
+	  <li>Scalaパターンは深いパターンマッチをサポート</li>
+	  <li>トップレベルオブジェクトがチェックされるだけでなくオブジェクト
+の内容についてもパターンマッチするかどうかがチェックされる</li>
+	</ul>
+	<section>
+	  <pre>
+expr match {
+   case BinOp("+", e, Number(0)) => println("a deep match")
+   case _ =>
+}</pre>
+	</section>
+	<ul>
+	  <li>BinOp型にマッチするか</li>
+	  <li>Number型にマッチするか</li>
+	  <li>値が0にマッチするか</li>
+	</ul>
+      </article>
+      <article>
+	<h3>
+	  シーケンスパターン
+	</h3>
+	ケースクラスに対するパターンマッチと同じようにListやArrayなどのシーケンス型に対するパターンマッチも可能
+	<section>
+	  <pre>
+expr match {
+  case List(0, _, _) => println("found it")
+  case _ =>
+}</pre>
+	</section>
+	先頭要素が0で、要素が3個のリストをチェックする
+	<section>
+	  <pre>
+expr match {
+  case List(0, _*) => println("found it")
+  case _ =>
+}</pre>
+	</section>
+`_*`はシーケンス内の任意個(0個を含む)の要素にマッチする
+      </article>
+      <article>
+	<h3>
+	  タプルパターン
+	</h3>
+	(a, b, c)のようなパターンは要素が3つの任意のタプルにマッチする
+	<section>
+	  <pre>
+def tupleDemo(expr: Any) =
+expr match {
+  case (a, b, c) => println("matched " + a + b + c)
+  case _ =>
+}
+
+tupleDemo(("a ", 3, "-tuple"))
+=> matched a 3-tuple
+</pre>
+	</section>	
+      </article>
+      <article>
+	<h3>
+	  型付きパターン
+	</h3>
+	型付きパターンは型テストと型キャストの便利な代用品として使える
+	<section>
+	  <pre>
+def generalSize(x: Any) = x match {
+  case s: String => s.length
+  case m: Map[_, _] => m.size
+  case _ => -1
+}
+
+generalSize("abc")
+=> 3
+
+generalSize(Map(1 -> 'a', 2 -> 'b'))
+=> 2
+
+generalSize(math.Pi)
+=> -1</pre>
+	</section>	
+
+      </article>
+      <article>
+	<h3>
+	  型付きパターンの続き
+	</h3>
+	<ul>
+	  <li>`s: String`はすべての(nullでない)Stringインスタンスにマッチする</li>
+	  <li>sとxは同じ値を参照しているのにxの型はAny,sの型はStringだということに注意</li>
+	  <li>パターンに対応する式の中ではs.lengthと書ける</li>
+	</ul>
+
+	<ul>
+	  <li>型付きパターンを使ったマッチと同じ効果は型テストしてから型キャストすることで得られるが、まわりくどいやり方になる</li>
+	</ul>
+	<section>
+	  <pre>
+expr.isInstanceOf[String] //String型になっているか
+expr.asInstanceOf[String] //String型にキャストする</pre>
+	</section>
+      </article>
+      <article>
+	<h3>
+	  型付きパターンの続き
+	</h3>
+	<section>
+	  <pre>
+if (expr.isInstanceOf[String]) {
+  val s = expr.asInstanceOf[String]
+  s.length
+} else ...</pre>
+	</section>
+	<ul>
+	  <li>Scalaでは型テストや型キャストを書くと冗長に見えるようにわざとしてある</li>
+	  <li>通常は型付きパターンによるパターンマッチを使ったほうがよい</li>
+	  <li>特に型テストと型キャストの両方を行う必要がある場合は2つの操作が1つのパターンマッチにまとめられる</li>
+	</ul>
+
+	<ul>
+	<li>`m: Map[_, _]`は何らかのキーと何らかの値から構成されるMapになっている任意の値にマッチし、mでその値を参照できる</li>
+	</ul>
+      </article>      
+      <article>
+	<h3>
+	  型消去
+	</h3>
+	<section>
+	  <pre>
+def isIntIntMap(x: Any) = x match {
+  case m: Map[Int, Int] => true
+  case _ => false
+}</pre>
+	  <pre>
+isIntIntMap(Map(1 -> 1))
+=>
+isIntIntMap(Map("abc" -> "abc"))
+=></pre>
+	</section>
+	  <ul>
+	    <li>ScalaはJavaと同様の消去モデルのジェネリックプログラミングを使っており実行時に型引数の情報を管理しない</li>
+	    <li>unchecked warningsが出ます</li>
+	  </ul>
+      </article>
+      <article>
+	<h3>
+	  配列の場合
+	</h3>
+	<section>
+	  <pre>
+def isStringArray(x: Any) = x match {
+  case a: Array[String] => "yes"
+  case _ => "no"
+}</pre>
+	  <pre>
+val as = Array("abc")
+isStringArray(as)
+=>
+val ai = Array(1,2,3)
+isStringArray(ai)
+=></pre>
+	</section>
+	<ul class="build">
+	  <li>配列は型消去の原則の例外</li>
+	</ul>
+      </article>
+      <article>
+	<h3>
+	  変数の束縛
+	</h3>
+	<section>
+	  <pre>
+expr match {
+  case UnOp("abs", e @ UnOp("abs", _)) => e
+  case _ =>
+}</pre>
+	</section>
+	<ul>
+	  <li>変数束縛パターン</li>
+	  <li>変数名 @ パターン</li>
+	  <li>UnOp("abs", _)にマッチした部分がe変数として使える</li>
+	</ul>
+
+      </article>
+      <article>
+	<h3>
+	  パターンガード
+	</h3>
+	<section>
+	  <pre>
+def simplifyAdd(e: Expr) e match {
+  case BinOp("+", x, x) => BinOp("*", x, Number(2))
+  case _ => e
+}
+=> error: x is alredy defined as value x</pre>
+	</section>
+	<ul>
+	  <li>変数はパターンの中で一度しか登場させることが出来ない</li>
+	  <li>パターンガードを使いましょう</li>
+	</ul>
+	<section>
+	  <pre>
+def simplifyAdd(e: Expr) e match {
+  case BinOp("+", x, y) if x == y => BinOp("*", x, Number(2))
+  case _ => e
+}</pre>
+	</section>
+	<section>
+	  <pre>
+case n: Int if 0 < n => .... //整数だけにマッチ
+case s: String if s(0) == ... //先頭がaの文字列にマッチ</pre>
+	</section>
+      </article>
+      <article>
+	<h3>
+	  パターンのオーバーラップ
+	</h3>
+	<section>
+	  <pre>
+def simp1ifyA11(expr: Expr): Expr expr match {
+  case UnOp("-", UnOp ("-", e)) => simp1ifyA11(e) // '-'は元の数の逆元
+  case BinOp(“+", e, Number(O)) => simp1ifyA11(e) // '0'は'+'の単位元
+  case BinOp("*", e, Number(l)) => simp1ifyA11(e) // '1'は'*'の単位元
+  case UnOp(op, e) => UnOp(op, simp1ifyA11(e))
+  case BinOp(op, l, r) => BinOp(op, simp1ifyA11(l), simp1ifyA11(r))
+  case _ => expr
+}</pre>
+	</section>
+	<ul>
+	  <li></li>
+	  <li></li>
+	  <li></li>
+	</ul>
+
+      </article>
+<!--  
+      <article>
+	<h3></h3>
+	<ul>
+	  <li></li>
+	  <li></li>
+	  <li></li>
+	</ul>
+	<section>
+	  <pre>
+	  </pre>
+	</section>
+      </article>
+      <article>
+        <h3>
+          Slide with bullet points and a longer title, just because we
+          can make it longer
+        </h3>
+        <ul>
+          <li>
+            Use this template to create your presentation
+          </li>
+          <li>
+            Use the provided color palette, box and arrow graphics, and
+            chart styles
+          </li>
+          <li>
+            Instructions are provided to assist you in using this
+            presentation template effectively
+          </li>
+          <li>
+            At all times strive to maintain Google's corporate look and feel
+          </li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>
+          Slide with bullet points that builds
+        </h3>
+        <ul class="build">
+          <li>
+            This is an example of a list
+          </li>
+          <li>
+            The list items fade in
+          </li>
+          <li>
+            Last one!
+          </li>
+        </ul>
+
+        <div class="build">
+          <p>Any element with child nodes can build.</p>
+          <p>It doesn't have to be a list.</p>
+        </div>
+      </article>
+
+      <article>
+        <h3>
+          Slide with a table
+        </h3>
+        
+        <table>
+          <tr>
+            <th>
+              Name
+            <th>
+              Occupation
+          <tr>
+            <td>
+              Luke Mahé
+            <td>
+              V.P. of Keepin’ It Real
+          <tr>
+            <td>
+              Marcin Wichary
+            <td>
+              The Michael Bay of Doodles
+        </table>
+      </article>
+      
+      <article class='smaller'>
+        <h3>
+          Slide with a table (smaller text)
+        </h3>
+        
+        <table>
+          <tr>
+            <th>
+              Name
+            <th>
+              Occupation
+          <tr>
+            <td>
+              Luke Mahé
+            <td>
+              V.P. of Keepin’ It Real
+          <tr>
+            <td>
+              Marcin Wichary
+            <td>
+              The Michael Bay of Doodles
+        </table>
+      </article>
+      
+      <article>
+        <h3>
+          Styles
+        </h3>
+        <ul>
+          <li>
+            <span class='red'>class="red"</span>
+          <li>
+            <span class='blue'>class="blue"</span>
+          <li>
+            <span class='green'>class="green"</span>
+          <li>
+            <span class='yellow'>class="yellow"</span>
+          <li>
+            <span class='black'>class="black"</span>
+          <li>
+            <span class='white'>class="white"</span>
+          <li>
+            <b>bold</b> and <i>italic</i>
+        </ul>
+      </article>
+      
+      <article>
+        <h2>
+          Segue slide
+        </h2>
+      </article>
+
+      <article>
+        <h3>
+          Slide with an image
+        </h3>
+        <p>
+          <img style='height: 500px' src='images/example-graph.png'>
+        </p>
+        <div class='source'>
+          Source: Sergey Brin
+        </div>
+      </article>
+
+      <article>
+        <h3>
+          Slide with an image (centered)
+        </h3>
+        <p>
+          <img class='centered' style='height: 500px' src='images/example-graph.png'>
+        </p>
+        <div class='source'>
+          Source: Larry Page
+        </div>
+      </article>
+
+      <article class='fill'>
+        <h3>
+          Image filling the slide (with optional header)
+        </h3>
+        <p>
+          <img src='images/example-cat.jpg'>
+        </p>
+        <div class='source white'>
+          Source: Eric Schmidt
+        </div>
+      </article>
+
+      <article>
+        <h3>
+          This slide has some code
+        </h3>
+        <section>
+        <pre>
+&lt;script type='text/javascript'&gt;
+  // Say hello world until the user starts questioning
+  // the meaningfulness of their existence.
+  function helloWorld(world) {
+    for (var i = 42; --i &gt;= 0;) {
+      alert('Hello ' + String(world));
+    }
+  }
+&lt;/script&gt;
+&lt;style&gt;
+  p { color: pink }
+  b { color: blue }
+  u { color: 'umber' }
+&lt;/style&gt;
+</pre>
+        </section>
+      </article>
+      
+      <article class='smaller'>
+        <h3>
+          This slide has some code (small font)
+        </h3>
+        <section>
+        <pre>
+&lt;script type='text/javascript'&gt;
+  // Say hello world until the user starts questioning
+  // the meaningfulness of their existence.
+  function helloWorld(world) {
+    for (var i = 42; --i &gt;= 0;) {
+      alert('Hello ' + String(world));
+    }
+  }
+&lt;/script&gt;
+&lt;style&gt;
+  p { color: pink }
+  b { color: blue }
+  u { color: 'umber' }
+&lt;/style&gt;
+</pre>
+        </section>
+      </article>
+      
+      <article>
+        <q>
+          The best way to predict the future is to invent it.
+        </q>
+        <div class='author'>
+          Alan Kay
+        </div>
+      </article>
+      
+      <article class='smaller'>
+        <q>
+          A distributed system is one in which the failure of a computer 
+          you didn’t even know existed can render your own computer unusable.
+        </q>
+        <div class='author'>
+          Leslie Lamport
+        </div>
+      </article>
+      
+      <article class='nobackground'>
+        <h3>
+          A slide with an embed + title
+        </h3>
+        
+        <iframe src='http://www.google.com/doodle4google/history.html'></iframe>
+      </article>
+
+      <article class='nobackground'>
+        <iframe src='http://www.google.com/doodle4google/history.html'></iframe>
+      </article>
+
+      <article class='fill'>
+        <h3>
+          Full-slide embed with (optional) slide title on top
+        </h3>
+        <iframe src='http://www.google.com/doodle4google/history.html'></iframe>
+      </article>
+      
+      <article>
+        <h3>
+          Thank you!
+        </h3>
+        
+        <ul>
+          <li>
+            <a href='http://www.google.com'>google.com</a>
+        </ul>
+      </article>
+
+-->
+
+    </section>
 
   </body>
 </html>
